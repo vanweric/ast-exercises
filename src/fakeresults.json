@@ -1,0 +1,44 @@
+[
+      {
+        "name": "TestPlayerDirectoryPathResolution",
+        "expectedResponse": "/player1/documents/game_save",
+        "receivedResponse": "/player1/documents/game_save",
+        "success": true
+      },
+      {
+        "name": "TestPlayerNetworkDriveResolution",
+        "expectedResponse": "//network/player2/game_save",
+        "receivedResponse": "//network/player2/game_save",
+        "success": true
+      },
+      {
+        "name": "TestPlaceholderResolution",
+        "expectedResponse": "/player1/shortcuts/latest_game_save",
+        "receivedResponse": "/player1/shortcuts/game_save_1",
+        "success": false
+      },
+      {
+        "name": "TestAbsolutePathResolution",
+        "expectedResponse": "/root/player1/documents/game_save",
+        "receivedResponse": "/root/player1/documents/game_save",
+        "success": true
+      },
+      {
+        "name": "TestRelativePathResolution",
+        "expectedResponse": "../documents/game_save",
+        "receivedResponse": "../documents/game_save",
+        "success": true
+      },
+      {
+        "name": "TestInvalidPathHandling",
+        "expectedResponse": "Error: Invalid path",
+        "receivedResponse": "Error: Invalid path",
+        "success": true
+      },
+      {
+        "name": "TestEmptyPathHandling",
+        "expectedResponse": "Error: Path cannot be empty",
+        "receivedResponse": "Error: No path specified",
+        "success": false
+      }
+]

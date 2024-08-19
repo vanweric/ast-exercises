@@ -36,3 +36,14 @@
     transform: rotate(360deg);
   }
 }
+
+.accordion-success {
+  background-color: #007bff
+}
+
+.accordion-failure {
+  background-color: #007bff
+}
+
+.accordion-fail .accordion-button { background-color: tomato }
+.accordion-success .accordion-button { background-color: lightgreen }
