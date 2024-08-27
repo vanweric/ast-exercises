@@ -98,7 +98,11 @@ function App() {
             </Nav>
 
             <Nav className="ms-auto">
-              <NavDropdown title="Exercises" id="basic-nav-dropdown" disabled={busy}>
+              <NavDropdown
+                title="Exercises"
+                id="basic-nav-dropdown"
+                disabled={busy}
+              >
                 {exercises.map((item, ix) => (
                   <NavDropdown.Item onClick={() => loadExercise(item)} key={ix}>
                     {item}
@@ -113,35 +117,46 @@ function App() {
   };
 
   const loadExercise = async (name) => {
+    const [exerciseBlob, testRunner] = await Promise.all([
+      (async () => {
+        const response1 = await fetch(`./exercises/${name}.json`);
+        return await response1.json();
+      })(),
+      (async () => {
+        const response2 = await fetch(`testrunner.py`);
+        return await response2.text();
+      })(),
+    ]);
+    console.log("blob", exerciseBlob);
+    console.log("trs", testRunner);
 
-    const exerciseResponse = await fetch(`./exercises/${name}.json`);
-    const exerciseBlob = await exerciseResponse.json();
-    console.log(exerciseBlob);
     setEditorValue(exerciseBlob.preloadText.join("\n"));
     setExerciseConfig(exerciseBlob);
+    setTestRunnerScript(testRunner);
 
-    const testRunnerResponse = await fetch(`testrunner.py`);
-    const testRunnerScript = await testRunnerResponse.text();
-    setTestRunnerScript(testRunnerScript);
-
-    runTests();
   };
 
-  const runTests = async () => {
-    console.log("trs", testRunnerScript)
+  const runTests =  () => {
+    if (pyodide) {
+    console.log("trs", testRunnerScript);
     pyodide.runPython(testRunnerScript);
-    console.log(editorValue)
-    const locals = pyodide.toPy({func: editorValue, config: exerciseConfig});
-    const result = JSON.parse(pyodide.runPython("runtests(func, config)", {locals} ));
-    
+    console.log(editorValue);
+    const locals = pyodide.toPy({ func: editorValue, config: exerciseConfig });
+    const result = JSON.parse(
+      pyodide.runPython("runtests(func, config)", { locals })
+    );
+
     console.log(result);
     console.log(result.success);
 
-    if(result.success) {
+    if (result.success) {
       console.log(result.results);
-       setExerciseResults(result.results)
+      setExerciseResults(result.results);
     }
+  }
   };
+
+  useEffect(() => runTests(), [testRunnerScript]);
 
   const CodeBlock = () => {
     return (
@@ -209,12 +224,15 @@ function App() {
                   blah blah blah
                 </Tab>
                 <Tab eventKey="tests" title="Tests">
-                <Button
-                  variant="primary"
-                  disabled={busy}
-                  onClick={runTests}
-                  style={{ marginRight: "5px" }}
-                >  RunTests              </Button>
+                  <Button
+                    variant="primary"
+                    disabled={busy}
+                    onClick={runTests}
+                    style={{ marginRight: "5px" }}
+                  >
+                    {" "}
+                    RunTests{" "}
+                  </Button>
 
                   <UnitTestResultsList results={exerciseResults} />
                 </Tab>
