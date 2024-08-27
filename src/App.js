@@ -114,31 +114,33 @@ function App() {
 
   const loadExercise = async (name) => {
 
-      fetch(`./exercises/${name}.json`)
-      .then((r) => r.json())
-      .then((blob) => {
-        console.log(blob);
-        setEditorValue(blob.preloadText.join("\n"));
-      })
-      fetch(`testrunner.py`)
-      .then((r)=> r.text())
-      .then((r)=> setTestRunnerScript(r));
-  
+    const exerciseResponse = await fetch(`./exercises/${name}.json`);
+    const exerciseBlob = await exerciseResponse.json();
+    console.log(exerciseBlob);
+    setEditorValue(exerciseBlob.preloadText.join("\n"));
+    setExerciseConfig(exerciseBlob);
+
+    const testRunnerResponse = await fetch(`testrunner.py`);
+    const testRunnerScript = await testRunnerResponse.text();
+    setTestRunnerScript(testRunnerScript);
+
     runTests();
   };
 
   const runTests = async () => {
-    console.log(testRunnerScript);
-    const firstResult = pyodide.runPython(testRunnerScript);
-    console.log(firstResult);
-    const locals = pyodide.toPy({func: {editorValue}, config: {exerciseConfig}});
-    const result = pyodide.runPython("runtests(func, config)", {locals} );
+    console.log("trs", testRunnerScript)
+    pyodide.runPython(testRunnerScript);
+    console.log(editorValue)
+    const locals = pyodide.toPy({func: editorValue, config: exerciseConfig});
+    const result = JSON.parse(pyodide.runPython("runtests(func, config)", {locals} ));
     
     console.log(result);
+    console.log(result.success);
 
-    console.log(result.toJs());
-
-    setExerciseConfig([]);
+    if(result.success) {
+      console.log(result.results);
+       setExerciseResults(result.results)
+    }
   };
 
   const CodeBlock = () => {
@@ -207,6 +209,13 @@ function App() {
                   blah blah blah
                 </Tab>
                 <Tab eventKey="tests" title="Tests">
+                <Button
+                  variant="primary"
+                  disabled={busy}
+                  onClick={runTests}
+                  style={{ marginRight: "5px" }}
+                >  RunTests              </Button>
+
                   <UnitTestResultsList results={exerciseResults} />
                 </Tab>
               </Tabs>
