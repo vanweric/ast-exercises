@@ -22,19 +22,30 @@ output format
 import json
 
 
+imports = '''
+import ast
+'''
 
-def runtests(func, inputjson):
+def runtests(usercode, inputjson):
+    function = None
+    functionName = inputjson['functionName']
+
     try:
-        exec(func)
+        codeobject = compile(usercode, '<string>', 'exec')
+        globes = {}
+        exec(imports, globes)
+        exec(codeobject, globes)
+        
     except Exception as e:
         print("An Error Occurred while processing the input function:")
         print(e)
         return json.dumps({'success': False})
 
-    if inputjson['functionName'] in locals():
-         functor = locals()[inputjson['functionName']]
+    if functionName in globes:
+         function = globes[functionName]
     else:
         print("Function Not Found")
+        print("globals", globals())
         return json.dumps({'success':False})
     
     results=[]
@@ -43,8 +54,10 @@ def runtests(func, inputjson):
         result['name'] = test['name']
         result['expectedResponse'] = test['expectedResult']
         try:
-            output = functor(test['input'])
+            output = function(test['input'])
         except Exception as e:
+            print("An Exception was raised during the tests: ")
+            print(e)
             output = str(type(e))
         result['input'] = test['input']
         result['receivedResponse'] = output

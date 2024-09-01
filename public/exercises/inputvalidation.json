@@ -25,13 +25,13 @@
         {
             "name": "Invalid String",
             "expectedResult": "SyntaxError",
-            "input": "garbagetext",
+            "input": "'garbagetext'",
             "match": "type",
             "help": "help string to render"
         },
         {
             "name": "Hack Attempt",
-            "expectedResult": "SyntaxError",
+            "expectedResult": "<class 'SyntaxError'>",
             "input": "__import__('os').system('echo hacked')",
             "match": "type",
             "help": "help string to render"
