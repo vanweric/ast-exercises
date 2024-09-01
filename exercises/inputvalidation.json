@@ -1,0 +1,40 @@
+{
+    "functionName": "Calculator",
+    "preloadText": [
+        "def Calculator(input):",
+        "   '''",
+        "   Takes a string representation of a math equation and returns a string representation of the calculated result",
+        "   '''",
+        "   return eval(input)"
+    ],
+    "tests": [
+        {
+            "name": "Simple Addition",
+            "expectedResult": 7,
+            "input": "3 + 4",
+            "match": "exact",
+            "help": "help string to render"
+        },
+        {
+            "name": "Unary Ops",
+            "expectedResult": -3,
+            "input": "(-3)",
+            "match": "exact",
+            "help": "help string to render"
+        },
+        {
+            "name": "Invalid String",
+            "expectedResult": "SyntaxError",
+            "input": "'garbagetext'",
+            "match": "type",
+            "help": "help string to render"
+        },
+        {
+            "name": "Hack Attempt",
+            "expectedResult": "<class 'SyntaxError'>",
+            "input": "__import__('os').system('echo hacked')",
+            "match": "type",
+            "help": "help string to render"
+        }
+    ]
+}
