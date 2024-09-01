@@ -1,6 +1,7 @@
 {
   "name": "ast-exercises",
   "version": "0.1.0",
+  "homepage": "https://vanweric.github.io/ast-exercises",
   "private": true,
   "dependencies": {
     "@codemirror/lang-python": "6.1.*",
@@ -21,6 +22,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "craco start",
     "build": "craco build",
     "test": "craco test",
