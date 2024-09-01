@@ -25,7 +25,7 @@ import ReactMarkdown from "react-markdown";
 
 import "./App.css";
 import exercises from "./exercises.json";
-import intromd from "./intromd"
+import intromd from "./intromd.md"
 
 import usePyodide from "./usePyodide";
 import Markdown from "react-markdown";
